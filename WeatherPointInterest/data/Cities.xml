@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfCity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<City>
+		<name>Napoli</name>
+		<latitude>40.8358846</latitude>
+		<longitude>14.2487679</longitude>
+		<id>1</id>
+	</City>
+	<City>
+		<name>Roma</name>
+		<latitude>41.8933203</latitude>
+		<longitude>12.4829321</longitude>
+		<id>2</id>
+	</City>
+	<City>
+		<name>Torino</name>
+		<latitude>45.0677551</latitude>
+		<longitude>7.6824892</longitude>
+		<id>3</id>
+	</City>
+	<City>
+		<name>Rionero in Vulture</name>
+		<latitude>40.917228</latitude>
+		<longitude>15.676275</longitude>
+		<id>4</id>
+	</City>
+	<City>
+		<name>Milano</name>
+		<latitude>45.4641943</latitude>
+		<longitude>9.1896346</longitude>
+		<id>5</id>
+	</City>
+</ArrayOfCity>
