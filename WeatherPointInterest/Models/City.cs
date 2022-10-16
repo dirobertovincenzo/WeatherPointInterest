@@ -3,6 +3,9 @@ using static WeatherPointInterest.Models.BusinessSearchEndpoint;
 
 namespace WeatherPointInterest.Models
 {
+    /// <summary>
+    /// The <c>City</c> class manage base info stored into xml file. It is a serializable class
+    /// </summary>
     [Serializable, XmlRoot("city")]
     public class City
     {

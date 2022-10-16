@@ -1,9 +1,9 @@
 ﻿namespace WeatherPointInterest.Models
 {
-    /*
-     * Classe per l'interpolazione della risposta json tramite dati ottenuti da https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-     */
 
+    /// <summary>
+    /// The class <c>WeatherInfo</c> represents all the weather info received via json after querying the API https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+    /// </summary>
     public class WeatherInfo
     {
         

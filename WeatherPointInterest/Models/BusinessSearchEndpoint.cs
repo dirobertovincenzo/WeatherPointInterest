@@ -3,6 +3,9 @@
     /*
      * Classe per l'interpolazione della risposta json https://api.yelp.com/v3/businesses/search 
      */
+    /// <summary>
+    /// The <c>BusinessSearchEndpoint</c> represents all the info of the points of interest of a given city received via json after querying the API
+    /// </summary>
     public class BusinessSearchEndpoint
     {
         public int total { get; set; }

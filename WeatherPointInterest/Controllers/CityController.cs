@@ -7,20 +7,29 @@ using WeatherPointInterest.Models;
 
 namespace WeatherPointInterest.Controllers
 {
+    /// <summary>
+    /// The Controller <c>CityController</c> manage base info of the city stored into database
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class CityController : ControllerBase
     {
-
+        /// <summary>
+        /// Gets all city available in the database 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        /***
-         * Return all city by Query 
-         */
+        
         public async Task<ActionResult<City[]>> GetAllCity()
         {
             City[] cities = new CityDAO().GetAll();
             return cities.Length > 0 ? cities : NotFound();
         }
+        /// <summary>
+        /// Search a city by name
+        /// </summary>
+        /// <param name="name">Name of the city</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{name:alpha}")]
         public async Task<ActionResult<City>> GetCity(string name)
@@ -32,6 +41,12 @@ namespace WeatherPointInterest.Controllers
             }
             return city;
         }
+        /// <summary>
+        /// Search a city by id
+        /// </summary>
+        /// <param name="name">Name of the city</param>
+        /// <returns></returns>
+        /// 
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<City>> GetCity(int id)

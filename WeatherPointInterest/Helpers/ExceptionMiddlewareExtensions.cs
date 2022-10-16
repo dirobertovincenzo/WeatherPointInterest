@@ -3,6 +3,9 @@ namespace WeatherPointInterest.Helpers;
 using System.Net;
 using System.Text.Json;
 
+/// <summary>
+/// The <c>ErrorHandlerMiddleware</c> class manage unhandled error that occour during application execution
+/// </summary>
 public class ErrorHandlerMiddleware
 {
     private readonly RequestDelegate _next;

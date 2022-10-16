@@ -3,6 +3,10 @@ using static WeatherPointInterest.Models.BusinessSearchEndpoint;
 
 namespace WeatherPointInterest.Models
 {
+    /// <summary>
+    /// Class <c>CityInfo</c> manage all the weather and points of interest info for a given city
+    /// plane.</summary>
+    ///
     public class CityInfo
     {
         private readonly City city;
@@ -18,10 +22,19 @@ namespace WeatherPointInterest.Models
         }
     
    
-
+        /// <summary>
+        /// WeatherInfo return all info about weather of city
+        /// </summary>
         public WeatherInfo WeatherInfo { get { return weatherInfo; }  }
-        public BusinessSearchEndpoint BusinessSearchEndpoints { get => businessSearchEndpoint;}
 
+        /// <summary>
+        /// BusinessSearchEndpoint return all info about business end points of city
+        /// </summary>
+        public BusinessSearchEndpoint BusinessSearchEndpoints { get => businessSearchEndpoint;}
+        
+        /// <summary>
+        /// City contains info about name and geographic coordinates (lat,lon)
+        /// </summary>
         public City City { get => city; }
 
 

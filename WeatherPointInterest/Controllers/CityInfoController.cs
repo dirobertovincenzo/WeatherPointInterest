@@ -30,7 +30,10 @@ namespace WeatherPointInterest.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-
+        /// <summary>
+        /// Returns all the info on all the cities available in the system
+        /// </summary>
+        /// <returns>City[]</returns>
         [HttpGet]
         public async Task<ActionResult<CityInfo[]>> GetAll()
         {
