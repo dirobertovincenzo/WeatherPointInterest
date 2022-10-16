@@ -15,8 +15,11 @@ namespace TestWeatherPointInterest
     public class CityInfoControllerTest
     {
         private IConfiguration _config;
-        
 
+        /// <summary>
+        /// Simulates the IConfiguration object used by the CityInfoController controller to read the
+        /// application configuration parameters
+        /// </summary>
         private IConfiguration Configuration
         {
             get
@@ -31,12 +34,17 @@ namespace TestWeatherPointInterest
             }
         }
 
-        public CityInfoControllerTest()
+        private CityInfoControllerTest()
         {
             IServiceCollection services = new ServiceCollection();
             services.AddSingleton<IConfiguration>(Configuration);
         }
-
+        /// <summary>
+        /// Simulates the IHttpFactory class required by the <c>CityInfoController</c> controller for connections to the APIs 
+        /// for reading weather info and the various business end points
+        /// </summary>
+        /// <param name="setupName"></param>
+        /// <returns></returns>
         private IHttpClientFactory GetHttpClientFactory(string setupName)
         {
             var handlerMock = new Mock<HttpMessageHandler>();
@@ -52,10 +60,13 @@ namespace TestWeatherPointInterest
                 )
                 .ReturnsAsync(result)
                 .Verifiable();
+
+            //Create a Mock element that simulate IHttpClientFactory
             var mockHttpClientFactory = new Mock<IHttpClientFactory>();
 
             switch (setupName) {
                 case "Weather":
+                    //Simulate HttpClient that call the Api about Weather and return an example of Json response
                     var clientWeather = new HttpClient(handlerMock.Object);
                     clientWeather.BaseAddress = new Uri(Configuration.GetValue<string>("WeatherBaseUrl"));
                     clientWeather.DefaultRequestHeaders.Clear();
@@ -118,7 +129,7 @@ namespace TestWeatherPointInterest
 
                     break;
                 case "Business":
-
+                    //Simulate HttpClient that call the Api about BusinessEndPoints and return an example of Json response
                     var clientBusiness = new HttpClient(handlerMock.Object);
                     clientBusiness.BaseAddress = new Uri(Configuration.GetValue<string>("BusinessBaseUrl"));
                     clientBusiness.DefaultRequestHeaders.Clear();
@@ -138,11 +149,16 @@ namespace TestWeatherPointInterest
 
 
 
-
+        /// <summary>
+        /// Call the <c>GetWeatherOfCity</c> method with two different values. One not present in the system which returns 
+        /// the NotFound error and the other which instead returns the json expected by the test
+        /// </summary>
+        /// <param name="id">Id of the city</param>
+        /// <returns></returns>
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
-        //Pass only one correct id  
+ 
         public async Task TestGetWeatherOfCity(int id)
         {
             IHttpClientFactory _httpClientFactory = GetHttpClientFactory("Weather");
@@ -165,7 +181,12 @@ namespace TestWeatherPointInterest
             }
         }
 
-
+        /// <summary>
+        /// Call the <c>GetWeatherOfCity</c> method with two different values. One not present in the system which returns 
+        /// the NotFound error and the other which instead returns the json expected by the test
+        /// </summary>
+        /// <param name="name">Name of the city</param>
+        /// <returns></returns>
         [Theory]
         [InlineData("Napoli")]
         [InlineData("Parigi")]
@@ -192,6 +213,12 @@ namespace TestWeatherPointInterest
             }
         }
 
+        /// <summary>
+        /// Call the <c>GetBusinessOfCity</c> method with two different values. One not present in the system which returns 
+        /// the NotFound error and the other which instead returns the json expected by the test
+        /// </summary>
+        /// <param name="id">Id of the city</param>
+        /// <returns></returns>
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
@@ -219,6 +246,12 @@ namespace TestWeatherPointInterest
         }
 
 
+        /// <summary>
+        /// Call the <c>GetBusinessOfCity</c> method with two different values. One not present in the system which returns 
+        /// the NotFound error and the other which instead returns the json expected by the test
+        /// </summary>
+        /// <param name="name">Name of the city</param>
+        /// <returns></returns>
         [Theory]
         [InlineData("Napoli")]
         [InlineData("Parigi")]

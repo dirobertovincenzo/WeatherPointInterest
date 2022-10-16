@@ -2,8 +2,14 @@
 
 namespace TestWeatherPointInterest
 {
+    /// <summary>
+    /// Test methods about <c>CityDao</c> class
+    /// </summary>
     public class CityDaoTest
     {
+        /// <summary>
+        /// Test method <c>GetAllCity</c> and try to verify if it returns correctly the records
+        /// </summary>
         [Fact]
         public void TestGetAllCity()
         {
@@ -43,7 +49,10 @@ namespace TestWeatherPointInterest
             }
         }
 
-        
+        /// <summary>
+        /// Tests <c>GetCity</c> method with differents parameters 
+        /// </summary>
+        /// <param name="id">Id of city</param>
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
@@ -71,6 +80,10 @@ namespace TestWeatherPointInterest
             }
         }
 
+        /// <summary>
+        /// Tests <c>GetCity</c> method with differents string parameters 
+        /// </summary>
+        /// <param name="name">Name of city</param>
         [Theory]
         [InlineData("Napoli")]
         [InlineData("Roma")]

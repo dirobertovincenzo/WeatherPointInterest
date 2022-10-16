@@ -5,8 +5,16 @@ using WeatherPointInterest.Controllers;
 
 namespace TestWeatherPointInterest
 {
+    /// <summary>
+    /// Execute tests about <c>CityController</c> class
+    /// </summary>
     public class CityControllerTest
     {
+        /// <summary>
+        /// Test method <c>GetAllCity</c> of CityController.
+        /// Creates an instance of the city class with latitude and longitude at 0 and executes a series of asserts to verify the correct execution of the search method
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task TestGetAllCity()
         {
@@ -21,6 +29,7 @@ namespace TestWeatherPointInterest
 		            <id>1</id>
 	           </City>             
              */
+            
             City city = new City(
                 0,
                 "Napoli",
@@ -49,7 +58,11 @@ namespace TestWeatherPointInterest
             }
         }
 
-        
+        /// <summary>
+        /// The method <c>TestGetCity</c> check that the system has read correctly all the records from the data file Cities.xml
+        /// </summary>
+        /// <param name="id">Id of the city</param>
+        /// <returns></returns>
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
@@ -58,7 +71,7 @@ namespace TestWeatherPointInterest
         [InlineData(4)]
         [InlineData(5)]
         [InlineData(6)]
-        //I check that the system has read all the records from the data file Cities.xml
+
         public async Task TestGetCity(int id)
         {
             var controller = new CityController();
@@ -78,6 +91,11 @@ namespace TestWeatherPointInterest
             }
         }
 
+        /// <summary>
+        /// The method <c>TestGetCity</c> check that the system has read correctly all the records from the data file Cities.xml
+        /// </summary>
+        /// <param name="id">Name of the city</param>
+        /// <returns></returns>
         [Theory]
         [InlineData("Napoli")]
         [InlineData("Roma")]
