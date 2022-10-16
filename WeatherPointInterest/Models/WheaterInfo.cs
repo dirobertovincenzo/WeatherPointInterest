@@ -7,10 +7,10 @@
     public class WeatherInfo
     {
         
-        public List<List>? list { get; set; }
-        public City? city { get; set; }
+        public List<ListValue>? list { get; set; }
+        public RequestedCity? city { get; set; }
 
-        public class City
+        public class RequestedCity
         {
             public int? id { get; set; }
             public string? name { get; set; }
@@ -33,7 +33,7 @@
             public double? lon { get; set; }
         }
 
-        public class List
+        public class ListValue
         {
             public int? dt { get; set; }
             public Main? main { get; set; }

@@ -11,7 +11,8 @@ namespace WeatherPointInterest.Controllers
     [Route("[controller]")]
     public class CityController : ControllerBase
     {
-            
+
+        [HttpGet]
         /***
          * Return all city by Query 
          */
@@ -20,7 +21,7 @@ namespace WeatherPointInterest.Controllers
             City[] cities = new CityDAO().GetAll();
             return cities.Length > 0 ? cities : NotFound();
         }
-
+        [HttpGet]
         [Route("{name:alpha}")]
         public async Task<ActionResult<City>> GetCity(string name)
         {
@@ -31,7 +32,7 @@ namespace WeatherPointInterest.Controllers
             }
             return city;
         }
-
+        [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<City>> GetCity(int id)
         {            
