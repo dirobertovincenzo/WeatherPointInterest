@@ -11,6 +11,21 @@ namespace WeatherPointInterest.Models
         private double _latitude;
         private double _longitude;
 
+#pragma warning disable CS8618 // Il campo non nullable deve contenere un valore non Null all'uscita dal costruttore. Provare a dichiararlo come nullable.
+        public City(int id,string name, double latitude, double longitude)
+#pragma warning restore CS8618 // Il campo non nullable deve contenere un valore non Null all'uscita dal costruttore. Provare a dichiararlo come nullable.
+        {
+            Id = id;
+            Name = name;
+            Latitude = latitude;
+            Longitude = longitude;           
+        }
+
+        public City()
+        {
+
+        }
+
         [XmlElement("name")]
         public string Name { get => name; set => name = value; }
         [XmlElement("latitude")]

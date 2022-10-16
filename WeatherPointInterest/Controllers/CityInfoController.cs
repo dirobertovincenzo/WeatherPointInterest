@@ -17,7 +17,9 @@ namespace WeatherPointInterest.Controllers
     {
 
         private readonly ILogger<CityInfoController> _logger;
+        //Interfaccia per accesso a appjson
         private readonly IConfiguration _configuration;
+        //Istanzia dinamicamente HttpClient provando a sopperire il problema del consuming delle socket
         private readonly IHttpClientFactory _httpClientFactory;
 
         public CityInfoController(ILogger<CityInfoController> logger, IConfiguration configuration, IHttpClientFactory httpClientFactory)
@@ -27,6 +29,7 @@ namespace WeatherPointInterest.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CityInfo>>> GetAll()
         {
@@ -41,6 +44,8 @@ namespace WeatherPointInterest.Controllers
             }
             return cityInfo.ToArray();
         }
+        //Permette di accedere ad una determinata città tramite parametro nome
+        //Dicitura alpha permette di definire che il valore in ingresso è di tipo stringa
         [HttpGet("{cityName:alpha}")]
         public async Task<ActionResult<CityInfo>> GetByCityName(string cityName)
         {
@@ -53,6 +58,7 @@ namespace WeatherPointInterest.Controllers
         }
 
         [HttpGet("{cityId}")]
+        //Permette di accedere ad una determinata città tramite parametro id di tipo int
         public async Task<ActionResult<CityInfo>> GetByCityId(int cityId)
         {
             City city = (new CityDAO()).Get(cityId);
@@ -84,6 +90,7 @@ namespace WeatherPointInterest.Controllers
                 List<KeyValuePair<string, string>> allIputParams = new List<KeyValuePair<string, string>>();
                 allIputParams.Add(new KeyValuePair<string, string>("lat", city.Latitude.ToString()));
                 allIputParams.Add(new KeyValuePair<string, string>("lon", city.Longitude.ToString()));
+                //Parametro cnt permette di definire il numero di estrazioni di meteo per intervalli di tempo
                 allIputParams.Add(new KeyValuePair<string, string>("cnt", _configuration["WeatherCntDefault"]));
                 allIputParams.Add(new KeyValuePair<string, string>("appid", _configuration["WeatherAPIKey"]));
                 string requestParams = string.Empty;
@@ -91,25 +98,27 @@ namespace WeatherPointInterest.Controllers
                 // URL Request Query parameters.  
                 requestParams = new FormUrlEncodedContent(allIputParams).ReadAsStringAsync().Result;
 
-                WeatherInfo weatherInfo = null;
+                WeatherInfo? weatherInfo = null;
 
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient
+                //Sending request to find web api REST service using HttpClient
                 HttpResponseMessage Res = await client.GetAsync("data/2.5/forecast/?" + requestParams);
                 //Checking the response is successful or not which is sent using HttpClient
                 if (Res.IsSuccessStatusCode)
                 {
                     //Storing the response details recieved from web api
                     string result = Res.Content.ReadAsStringAsync().Result;
-                    //Deserializing the response recieved from web api and storing into the Employee list
+                    //Deserializing the response recieved from web api and storing into the weatherInfo parameter
                     weatherInfo = JsonConvert.DeserializeObject<WeatherInfo>(result);
                 }
+#pragma warning disable CS8603 // Possibile restituzione di riferimento Null.
                 return weatherInfo;
+#pragma warning restore CS8603 // Possibile restituzione di riferimento Null.
             }
         }
 
         private async Task<BusinessSearchEndpoint> GetBusinessSearchEndpoint(City city)
         {
-            BusinessSearchEndpoint businessSearchEndpoint = null;            
+            BusinessSearchEndpoint? businessSearchEndpoint = null;            
             using (var client = _httpClientFactory.CreateClient("Business"))
             {
                 // Converting Request Params to Key Value Pair.  
@@ -121,6 +130,7 @@ namespace WeatherPointInterest.Controllers
 
                 allIputParams.Add(new KeyValuePair<string, string>("latitude", city.Latitude.ToString(nfi)));
                 allIputParams.Add(new KeyValuePair<string, string>("longitude", city.Longitude.ToString(nfi)));
+                //Permette di definire il numero
                 allIputParams.Add(new KeyValuePair<string, string>("limit", _configuration["BusinessLimit"]));
                 string requestParams = string.Empty;
 
