@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
@@ -51,9 +53,11 @@ namespace WeatherPointInterest.Controllers
             return cityInfo.ToArray();
         }
 
-
-        //Permette di accedere ad una determinata città tramite parametro nome
-        //Dicitura alpha permette di definire che il valore in ingresso è di tipo stringa
+        /// <summary>
+        /// Returns all information of a specific city searched by name
+        /// </summary>
+        /// <param name="cityName">Name of the city</param>
+        /// <returns>CityInfo or not found error</returns>
         [HttpGet("{cityName:alpha}")]
         public async Task<ActionResult<CityInfo>> GetByCityName(string cityName)
         {
@@ -64,7 +68,11 @@ namespace WeatherPointInterest.Controllers
             }
             return await this.GetCityInfo(city);
         }
-
+        /// <summary>
+        /// Returns the information of a specific city searched by id
+        /// </summary>
+        /// <param name="cityId">Id of the city</param>
+        /// <returns></returns>
         [HttpGet("{cityId}")]
         //Permette di accedere ad una determinata città tramite parametro id di tipo int
         public async Task<ActionResult<CityInfo>> GetByCityId(int cityId)
@@ -86,8 +94,16 @@ namespace WeatherPointInterest.Controllers
             return cityInfo;
         }
 
+        /// <summary>
+        /// Returns the weather information of a specific city searched by id. 
+        /// A variable number of time frames can be obtained if you pass the optional <c>cntResult</c> parameter
+        /// The default value used is 1 if nothing value or 0 is passed
+        /// </summary>
+        /// <param name="id">Id of the city</param>
+        /// <param name="cntResult">Number of time intervals you want to view. The default value used is 1 if nothing value or 0 is passed</param>
+        /// <returns></returns>
         [HttpGet("{id}/weather/{cntResult?}")]
-        public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(int id, int cntResult = 0)
+        public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(int id, int cntResult = 1)
         {
             City city = await (new CityDAO()).Get(id);
             if (city == null)
@@ -97,6 +113,15 @@ namespace WeatherPointInterest.Controllers
 
             return await this.GetWeatherInfo(city, cntResult);
         }
+
+        /// <summary>
+        /// Returns the weather information of a specific city searched by name. 
+        /// A variable number of time frames can be obtained if you pass the optional <c>cntResult</c> parameter
+        /// The default value used is 1 if nothing value or 0 is passed
+        /// </summary>
+        /// <param name="cityName">Name of the city</param>
+        /// <param name="cntResult">Number of time intervals you want to view. The default value used is 1 if nothing value or 0 is passed</param>
+        /// <returns></returns>     
         [HttpGet("{cityName:alpha}/weather/{cntResult?}")]
         public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(string cityName, int cntResult = 0)
         {
@@ -108,6 +133,15 @@ namespace WeatherPointInterest.Controllers
             return await this.GetWeatherInfo(city, cntResult);
         }
 
+        /// <summary>
+        /// Returns information about the points of interest of a specific city searched by id.
+        /// You can get a variable number of points of interest if you pass the optional<c> limit</c> parameter. 
+        /// The default value is 20 if nothing value or 0 is passed
+        /// The maximum accepted value is 50 points of interest
+        /// </summary>
+        /// <param name="id">Id of the city</param>
+        /// <param name="limit">Number of points of interest you want to view. The default value used is 20 if nothing value or 0 is passed. The maximum accepted value is 50 points of interest</param>
+        /// <returns></returns>
         [HttpGet("{id}/business/{limit?}")]
         public async Task<ActionResult<BusinessSearchEndpoint>> GetBusinessOfCity(int id, int limit = 0)
         {
@@ -119,6 +153,16 @@ namespace WeatherPointInterest.Controllers
 
             return await this.GetBusinessSearchEndpoint(city, limit);
         }
+
+        /// <summary>
+        /// Returns information about the points of interest of a specific city searched by id.
+        /// You can get a variable number of points of interest if you pass the optional<c> limit</c> parameter. 
+        /// The default value is 20 if nothing value or 0 is passed
+        /// The maximum accepted value is 50 points of interest
+        /// </summary>
+        /// <param name="cityName">Name of the city</param>
+        /// <param name="limit">Number of points of interest you want to view. The default value is 20 if nothing value or 0 is passed. The maximum accepted value is 50 points of interest</param>
+        /// <returns></returns>
         [HttpGet("{cityName:alpha}/business/{limit?}")]
         public async Task<ActionResult<BusinessSearchEndpoint>> GetBusinessOfCity(string cityName, int limit = 0)
         {
@@ -202,6 +246,11 @@ namespace WeatherPointInterest.Controllers
                 allIputParams.Add(new KeyValuePair<string, string>("latitude", city.Latitude.ToString(nfi)));
                 allIputParams.Add(new KeyValuePair<string, string>("longitude", city.Longitude.ToString(nfi)));
                 //Permette di definire il numero
+                if (limit > 50)
+                {
+                    //If the maximum value managed by the API is exceeded, the lookup value is set as 50
+                    limit = 50;
+                }
                 allIputParams.Add(new KeyValuePair<string, string>("limit", limit.ToString()));
                 string requestParams = string.Empty;
 

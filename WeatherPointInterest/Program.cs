@@ -1,6 +1,8 @@
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using WeatherPointInterest.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,28 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "City Info API",
+        Version = "v1",
+        Description = "An API to perform info about weather and business point of interest of one or more cities",
+        Contact = new OpenApiContact
+        {
+            Name = "Vincenzo Di Roberto",
+            Email = "vincenzo.diroberto@gmail.com",
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Open source API LICX",            
+        }
+    });
+    // Set the comments path for the Swagger JSON and UI.
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+
 builder.Services.AddHttpClient("Weather", httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration.GetValue<string>("WeatherBaseUrl"));

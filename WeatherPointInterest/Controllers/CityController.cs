@@ -44,7 +44,7 @@ namespace WeatherPointInterest.Controllers
         /// <summary>
         /// Search a city by id
         /// </summary>
-        /// <param name="name">Name of the city</param>
+        /// <param name="id">Integer id of the city</param>
         /// <returns></returns>
         /// 
         [HttpGet]
