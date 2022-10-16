@@ -11,20 +11,11 @@ namespace WeatherPointInterest.Controllers
     [Route("[controller]")]
     public class CityController : ControllerBase
     {
-    
-        private readonly ILogger<CityController> _logger;
-
-
-        public CityController(ILogger<CityController> logger)
-        {
-            _logger = logger;
-
-        }
-
+            
         /***
          * Return all city by Query 
          */
-        public IEnumerable<City> GetAllCity()
+        public async Task<ActionResult<City[]>> GetAllCity()
         {
             return (new CityDAO()).GetAll();
         }

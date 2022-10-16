@@ -37,9 +37,9 @@ namespace WeatherPointInterest.Controllers
             List<CityInfo> cityInfo = new();
             foreach (City c in cities)
             {
-                cityInfo.Add(new CityInfo(c,
-                this.GetWeatherInfo(c).Result,
-                this.GetBusinessSearchEndpoint(c).Result
+                 cityInfo.Add(new CityInfo(c,
+                 await this.GetWeatherInfo(c),
+                 await this.GetBusinessSearchEndpoint(c)
                 ));
             }
             return cityInfo.ToArray();
