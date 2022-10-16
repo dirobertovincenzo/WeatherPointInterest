@@ -22,7 +22,7 @@ namespace WeatherPointInterest.Controllers
         
         public async Task<ActionResult<City[]>> GetAllCity()
         {
-            City[] cities = new CityDAO().GetAll();
+            City[] cities = await new CityDAO().GetAll();
             return cities.Length > 0 ? cities : NotFound();
         }
         /// <summary>
@@ -34,7 +34,7 @@ namespace WeatherPointInterest.Controllers
         [Route("{name:alpha}")]
         public async Task<ActionResult<City>> GetCity(string name)
         {
-            City city = (new CityDAO()).Get(name);
+            City city = await (new CityDAO()).Get(name);
             if (city == null)
             {
                 return NotFound();
@@ -51,7 +51,7 @@ namespace WeatherPointInterest.Controllers
         [Route("{id}")]
         public async Task<ActionResult<City>> GetCity(int id)
         {            
-            City city = (new CityDAO()).Get(id);
+            City city = await (new CityDAO()).Get(id);
             if (city == null)
             {
                 return NotFound();

@@ -10,7 +10,7 @@ namespace WeatherPointInterest.Models
     public class City
     {
         private int id;
-        private string name;
+        private string ? name;
         private double _latitude;
         private double _longitude;
 

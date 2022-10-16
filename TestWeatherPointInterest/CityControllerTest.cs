@@ -100,7 +100,7 @@ namespace TestWeatherPointInterest
         [InlineData("Napoli")]
         [InlineData("Roma")]
         [InlineData("Milano")]
-        [InlineData("Rionero in Vulture")]
+        [InlineData("Palermo")]
         [InlineData("Torino")]
         //I check that the system has read all the records from the data file Cities.xml
         public async Task TestGetCityName(string name)

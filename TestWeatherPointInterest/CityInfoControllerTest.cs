@@ -34,7 +34,9 @@ namespace TestWeatherPointInterest
             }
         }
 
-        private CityInfoControllerTest()
+#pragma warning disable CS8618 // Il campo non nullable deve contenere un valore non Null all'uscita dal costruttore. Provare a dichiararlo come nullable.
+        public CityInfoControllerTest()
+#pragma warning restore CS8618 // Il campo non nullable deve contenere un valore non Null all'uscita dal costruttore. Provare a dichiararlo come nullable.
         {
             IServiceCollection services = new ServiceCollection();
             services.AddSingleton<IConfiguration>(Configuration);

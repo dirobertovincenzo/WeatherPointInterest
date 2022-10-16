@@ -11,7 +11,7 @@ namespace TestWeatherPointInterest
         /// Test method <c>GetAllCity</c> and try to verify if it returns correctly the records
         /// </summary>
         [Fact]
-        public void TestGetAllCity()
+        public async Task TestGetAllCity()
         {
             /* This is the data value of Napoli City in data xml
              * I verify that the CityDao Model looks for the city like Naples and
@@ -30,7 +30,7 @@ namespace TestWeatherPointInterest
                 0
             );
             CityDAO cityDAO = new CityDAO();
-            City[] cities = cityDAO.GetAll();
+            City[] cities = await cityDAO.GetAll();
 #pragma warning disable CS8600 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
             City naples = cities.Where(x => x.Name == "Napoli").FirstOrDefault();            
 #pragma warning restore CS8600 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
@@ -62,10 +62,10 @@ namespace TestWeatherPointInterest
         [InlineData(5)]
         [InlineData(6)]
         //I check that the system has read all the records from the data file Cities.xml
-        public void TestGetCity(int id)
+        public async Task TestGetCity(int id)
         {           
             CityDAO cityDAO = new CityDAO();
-            City city = cityDAO.Get(id);
+            City city = await cityDAO.Get(id);
             switch (id)
             {
                 case >=1 and <=5:
@@ -88,13 +88,13 @@ namespace TestWeatherPointInterest
         [InlineData("Napoli")]
         [InlineData("Roma")]
         [InlineData("Milano")]
-        [InlineData("Rionero in Vulture")]
+        [InlineData("Palermo")]
         [InlineData("Torino")]
         //I check that the system has read all the records from the data file Cities.xml
-        public void TestGetCityName(string name)
+        public async Task TestGetCityName(string name)
         {
             CityDAO cityDAO = new CityDAO();
-            City city = cityDAO.Get(name);
+            City city = await cityDAO.Get(name);
             Assert.NotNull(city);
         }
 

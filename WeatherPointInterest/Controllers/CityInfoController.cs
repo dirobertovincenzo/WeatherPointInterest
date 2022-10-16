@@ -37,7 +37,7 @@ namespace WeatherPointInterest.Controllers
         [HttpGet]
         public async Task<ActionResult<CityInfo[]>> GetAll()
         {
-            City[] cities = (new CityDAO()).GetAll();
+            City[] cities = await (new CityDAO()).GetAll();
             if (cities.Length == 0)
             {
                 return NotFound();
@@ -57,7 +57,7 @@ namespace WeatherPointInterest.Controllers
         [HttpGet("{cityName:alpha}")]
         public async Task<ActionResult<CityInfo>> GetByCityName(string cityName)
         {
-            City city = (new CityDAO()).Get(cityName);
+            City city = await (new CityDAO()).Get(cityName);
             if (city == null)
             {
                 return NotFound();
@@ -69,7 +69,7 @@ namespace WeatherPointInterest.Controllers
         //Permette di accedere ad una determinata città tramite parametro id di tipo int
         public async Task<ActionResult<CityInfo>> GetByCityId(int cityId)
         {
-            City city = (new CityDAO()).Get(cityId);
+            City city = await (new CityDAO()).Get(cityId);
             if (city == null)
             {
                 return NotFound();
@@ -89,7 +89,7 @@ namespace WeatherPointInterest.Controllers
         [HttpGet("{id}/weather/{cntResult?}")]
         public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(int id, int cntResult = 0)
         {
-            City city = (new CityDAO()).Get(id);
+            City city = await (new CityDAO()).Get(id);
             if (city == null)
             {
                 return NotFound();
@@ -100,7 +100,7 @@ namespace WeatherPointInterest.Controllers
         [HttpGet("{cityName:alpha}/weather/{cntResult?}")]
         public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(string cityName, int cntResult = 0)
         {
-            City city = (new CityDAO()).Get(cityName);
+            City city = await (new CityDAO()).Get(cityName);
             if (city == null)
             {
                 return NotFound();
@@ -111,7 +111,7 @@ namespace WeatherPointInterest.Controllers
         [HttpGet("{id}/business/{limit?}")]
         public async Task<ActionResult<BusinessSearchEndpoint>> GetBusinessOfCity(int id, int limit = 0)
         {
-            City city = (new CityDAO()).Get(id);
+            City city = await (new CityDAO()).Get(id);
             if (city == null)
             {
                 return NotFound();
@@ -122,7 +122,7 @@ namespace WeatherPointInterest.Controllers
         [HttpGet("{cityName:alpha}/business/{limit?}")]
         public async Task<ActionResult<BusinessSearchEndpoint>> GetBusinessOfCity(string cityName, int limit = 0)
         {
-            City city = (new CityDAO()).Get(cityName);
+            City city = await (new CityDAO()).Get(cityName);
             if (city == null)
             {
                 return NotFound();
@@ -141,8 +141,14 @@ namespace WeatherPointInterest.Controllers
             {
                 // Converting Request Params to Key Value Pair.  
                 List<KeyValuePair<string, string>> allIputParams = new List<KeyValuePair<string, string>>();
-                allIputParams.Add(new KeyValuePair<string, string>("lat", city.Latitude.ToString()));
-                allIputParams.Add(new KeyValuePair<string, string>("lon", city.Longitude.ToString()));
+
+                //Force double parameter to use "." separator because the endpoint doesn't accept ","
+                NumberFormatInfo nfi = new NumberFormatInfo();
+                nfi.NumberDecimalSeparator = ".";
+
+                allIputParams.Add(new KeyValuePair<string, string>("lat", city.Latitude.ToString(nfi)));
+                allIputParams.Add(new KeyValuePair<string, string>("lon", city.Longitude.ToString(nfi)));
+
                 //Parametro cnt permette di definire il numero di estrazioni di meteo per intervalli di tempo
                 if (cntResult == 0)
                 {

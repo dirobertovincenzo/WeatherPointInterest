@@ -38,9 +38,9 @@ namespace WeatherPointInterest.Models
         /// Return all city of database
         /// </summary>
         /// <returns>Array of City items</returns>
-        public City[] GetAll()
+        public Task<City[]> GetAll()
         {
-            return cities;
+            return Task.FromResult(cities);
         }
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace WeatherPointInterest.Models
         /// </summary>
         /// <param name="id">Integer index of city into database</param>
         /// <returns>City searched by id</returns>
-        public City Get(int id)
+        public async Task<City> Get(int id)
         {
-            City[] cities = GetAll();
+            City[] cities = await GetAll();
             return cities.Length > 0 ? cities.Where(x => x.Id == id).FirstOrDefault() : null;
 
         }
@@ -60,9 +60,9 @@ namespace WeatherPointInterest.Models
         /// </summary>
         /// <param name="name">Name of city</param>
         /// <returns>City searched by name</returns>
-        public City Get(string name)
+        public async Task<City> Get(string name)
         {
-            City[] cities = GetAll();
+            City[] cities = await GetAll();
             return cities.Length > 0 ? cities.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault() : null;
 
         }
