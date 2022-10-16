@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -15,10 +17,14 @@ namespace WeatherPointInterest.Controllers
     {
 
         private readonly ILogger<CityInfoController> _logger;
+        private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public CityInfoController(ILogger<CityInfoController> logger)
+        public CityInfoController(ILogger<CityInfoController> logger, IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -36,9 +42,9 @@ namespace WeatherPointInterest.Controllers
             return cityInfo.ToArray();
         }
         [HttpGet("{cityName:alpha}")]
-        public async Task<ActionResult<CityInfo>> GetByCityName(string name)
+        public async Task<ActionResult<CityInfo>> GetByCityName(string cityName)
         {
-            City city = (new CityDAO()).Get(name);
+            City city = (new CityDAO()).Get(cityName);
             if (city == null)
             {
                 return NotFound();
@@ -72,21 +78,14 @@ namespace WeatherPointInterest.Controllers
         private async Task<WeatherInfo> GetWeatherInfo(City city)
         {
             WeatherInfo weather = new WeatherInfo();
-            using (var client = new HttpClient())
+            using (var client = _httpClientFactory.CreateClient("Weather"))
             {
-                string baseUrl = "https://api.openweathermap.org/";
-                //Passing service base url
-                client.BaseAddress = new Uri(baseUrl);
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
                 // Converting Request Params to Key Value Pair.  
                 List<KeyValuePair<string, string>> allIputParams = new List<KeyValuePair<string, string>>();
                 allIputParams.Add(new KeyValuePair<string, string>("lat", city.Latitude.ToString()));
                 allIputParams.Add(new KeyValuePair<string, string>("lon", city.Longitude.ToString()));
-                allIputParams.Add(new KeyValuePair<string, string>("cnt", "1"));
-                allIputParams.Add(new KeyValuePair<string, string>("appid", "194ab5351af797b6bbda6cf1ee5fc321"));
+                allIputParams.Add(new KeyValuePair<string, string>("cnt", _configuration["WeatherCntDefault"]));
+                allIputParams.Add(new KeyValuePair<string, string>("appid", _configuration["WeatherAPIKey"]));
                 string requestParams = string.Empty;
 
                 // URL Request Query parameters.  
@@ -110,17 +109,9 @@ namespace WeatherPointInterest.Controllers
 
         private async Task<BusinessSearchEndpoint> GetBusinessSearchEndpoint(City city)
         {
-            BusinessSearchEndpoint businessSearchEndpoint = null;
-            var clientHandler = new HttpClientHandler();
-            using (var client = new HttpClient(clientHandler))
+            BusinessSearchEndpoint businessSearchEndpoint = null;            
+            using (var client = _httpClientFactory.CreateClient("Business"))
             {
-                string baseUrl = "https://api.yelp.com/";
-                //Passing service base url
-                client.BaseAddress = new Uri(baseUrl);
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "vwCUDDoUaABrpUUoVUXCltwuYsPGKrGy5Hu5E9G_QuK3HHsw0-NRu9EPd8luHt6Gbvv6wQtukLtauHstHKoeZ7WdwjOcNuSuCwG7Pg0BFZbxtQIhBYudK_YfNr5KY3Yx");
                 // Converting Request Params to Key Value Pair.  
                 List<KeyValuePair<string, string>> allIputParams = new List<KeyValuePair<string, string>>();
 
@@ -130,6 +121,7 @@ namespace WeatherPointInterest.Controllers
 
                 allIputParams.Add(new KeyValuePair<string, string>("latitude", city.Latitude.ToString(nfi)));
                 allIputParams.Add(new KeyValuePair<string, string>("longitude", city.Longitude.ToString(nfi)));
+                allIputParams.Add(new KeyValuePair<string, string>("limit", _configuration["BusinessLimit"]));
                 string requestParams = string.Empty;
 
                 // URL Request Query parameters.  

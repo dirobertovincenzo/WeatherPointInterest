@@ -13,10 +13,12 @@ namespace WeatherPointInterest.Controllers
     {
     
         private readonly ILogger<CityController> _logger;
-    
+
+
         public CityController(ILogger<CityController> logger)
         {
-            _logger = logger;          
+            _logger = logger;
+
         }
 
         /***
