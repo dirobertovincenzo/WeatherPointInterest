@@ -16,7 +16,7 @@ namespace WeatherPointInterest.Controllers
     public class CityInfoController : ControllerBase
     {
 
-        private readonly ILogger<CityInfoController> _logger;
+
         //Interfaccia per accesso a appjson
         private readonly IConfiguration _configuration;
         //Istanzia dinamicamente HttpClient provando a sopperire il problema del consuming delle socket
@@ -24,19 +24,18 @@ namespace WeatherPointInterest.Controllers
 
 
 
-        public CityInfoController(ILogger<CityInfoController> logger, IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public CityInfoController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
-            _logger = logger;
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
         }
 
-        
+
         [HttpGet]
         public async Task<ActionResult<CityInfo[]>> GetAll()
         {
             City[] cities = (new CityDAO()).GetAll();
-            if(cities.Length == 0)
+            if (cities.Length == 0)
             {
                 return NotFound();
             }
@@ -44,10 +43,12 @@ namespace WeatherPointInterest.Controllers
             foreach (City c in cities)
             {
 
-                cityInfo.Add(await this.GetCityInfo(c)); 
+                cityInfo.Add(await this.GetCityInfo(c));
             }
             return cityInfo.ToArray();
         }
+
+
         //Permette di accedere ad una determinata città tramite parametro nome
         //Dicitura alpha permette di definire che il valore in ingresso è di tipo stringa
         [HttpGet("{cityName:alpha}")]
@@ -74,7 +75,7 @@ namespace WeatherPointInterest.Controllers
         }
 
         private async Task<CityInfo> GetCityInfo(City city)
-        { 
+        {
             CityInfo cityInfo = new CityInfo(city,
                 await this.GetWeatherInfo(city),
                 await this.GetBusinessSearchEndpoint(city)
@@ -82,10 +83,55 @@ namespace WeatherPointInterest.Controllers
             return cityInfo;
         }
 
+        [HttpGet("{id}/weather/{cntResult?}")]
+        public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(int id, int cntResult = 0)
+        {
+            City city = (new CityDAO()).Get(id);
+            if (city == null)
+            {
+                return NotFound();
+            }
 
-        //Hosted web API REST Service base url
+            return await this.GetWeatherInfo(city, cntResult);
+        }
+        [HttpGet("{cityName:alpha}/weather/{cntResult?}")]
+        public async Task<ActionResult<WeatherInfo>> GetWeatherOfCity(string cityName, int cntResult = 0)
+        {
+            City city = (new CityDAO()).Get(cityName);
+            if (city == null)
+            {
+                return NotFound();
+            }
+            return await this.GetWeatherInfo(city, cntResult);
+        }
 
-        private async Task<WeatherInfo> GetWeatherInfo(City city)
+        [HttpGet("{id}/business/{limit?}")]
+        public async Task<ActionResult<BusinessSearchEndpoint>> GetBusinessOfCity(int id, int limit = 0)
+        {
+            City city = (new CityDAO()).Get(id);
+            if (city == null)
+            {
+                return NotFound();
+            }
+
+            return await this.GetBusinessSearchEndpoint(city, limit);
+        }
+        [HttpGet("{cityName:alpha}/business/{limit?}")]
+        public async Task<ActionResult<BusinessSearchEndpoint>> GetBusinessOfCity(string cityName, int limit = 0)
+        {
+            City city = (new CityDAO()).Get(cityName);
+            if (city == null)
+            {
+                return NotFound();
+            }
+            return await this.GetBusinessSearchEndpoint(city, limit);
+        }
+
+
+
+
+
+        private async Task<WeatherInfo> GetWeatherInfo(City city, int cntResult = 0)
         {
             WeatherInfo weather = new WeatherInfo();
             using (var client = _httpClientFactory.CreateClient("Weather"))
@@ -95,7 +141,12 @@ namespace WeatherPointInterest.Controllers
                 allIputParams.Add(new KeyValuePair<string, string>("lat", city.Latitude.ToString()));
                 allIputParams.Add(new KeyValuePair<string, string>("lon", city.Longitude.ToString()));
                 //Parametro cnt permette di definire il numero di estrazioni di meteo per intervalli di tempo
-                allIputParams.Add(new KeyValuePair<string, string>("cnt", _configuration["WeatherCntDefault"]));
+                if (cntResult == 0)
+                {
+                    Int32.TryParse(_configuration["WeatherCntDefault"], out cntResult);
+                }
+
+                allIputParams.Add(new KeyValuePair<string, string>("cnt", cntResult.ToString()));
                 allIputParams.Add(new KeyValuePair<string, string>("appid", _configuration["WeatherAPIKey"]));
                 string requestParams = string.Empty;
 
@@ -111,8 +162,10 @@ namespace WeatherPointInterest.Controllers
                 {
                     //Storing the response details recieved from web api
                     string result = Res.Content.ReadAsStringAsync().Result;
-                    //Deserializing the response recieved from web api and storing into the weatherInfo parameter
-                    weatherInfo = JsonConvert.DeserializeObject<WeatherInfo>(result);
+                    if (!String.IsNullOrEmpty(result)){
+                        //Deserializing the response recieved from web api and storing into the weatherInfo parameter
+                        weatherInfo = JsonConvert.DeserializeObject<WeatherInfo>(result);
+                    }
                 }
 #pragma warning disable CS8603 // Possibile restituzione di riferimento Null.
                 return weatherInfo;
@@ -120,11 +173,16 @@ namespace WeatherPointInterest.Controllers
             }
         }
 
-        private async Task<BusinessSearchEndpoint> GetBusinessSearchEndpoint(City city)
+        private async Task<BusinessSearchEndpoint> GetBusinessSearchEndpoint(City city,int limit = 0)
         {
-            BusinessSearchEndpoint? businessSearchEndpoint = null;            
+            BusinessSearchEndpoint? businessSearchEndpoint = null;
             using (var client = _httpClientFactory.CreateClient("Business"))
             {
+                if (limit == 0)
+                {
+                    Int32.TryParse(_configuration["BusinessLimit"], out limit);
+                }
+
                 // Converting Request Params to Key Value Pair.  
                 List<KeyValuePair<string, string>> allIputParams = new List<KeyValuePair<string, string>>();
 
@@ -135,7 +193,7 @@ namespace WeatherPointInterest.Controllers
                 allIputParams.Add(new KeyValuePair<string, string>("latitude", city.Latitude.ToString(nfi)));
                 allIputParams.Add(new KeyValuePair<string, string>("longitude", city.Longitude.ToString(nfi)));
                 //Permette di definire il numero
-                allIputParams.Add(new KeyValuePair<string, string>("limit", _configuration["BusinessLimit"]));
+                allIputParams.Add(new KeyValuePair<string, string>("limit", limit.ToString()));
                 string requestParams = string.Empty;
 
                 // URL Request Query parameters.  
@@ -156,5 +214,6 @@ namespace WeatherPointInterest.Controllers
 
             }
         }
+        
     }
 }
