@@ -5,24 +5,34 @@ namespace WeatherPointInterest.Models
    
     public class CityDAO
     {
-      
-        public City[] GetAll()
+        private static readonly City[] cities;
+
+        static CityDAO()
         {
-            //string path = System.IO.Path.Combine(_env.WebRootPath, "/data/Cities.xml");
-            City[] cities = DeserializeObject(@"data/Cities.xml");
-            return cities;
+            cities = DeserializeObject(@"data/Cities.xml");
         }
-        private City[] DeserializeObject(string filename)
+
+        private static City[] DeserializeObject(string filename)
         {
             XmlSerializer mySerializer = new XmlSerializer(typeof(City[]));
-            FileStream fs = new FileStream(filename, FileMode.Open);
+            City[] cities = new City[0];
+            if (File.Exists(filename))
+            {
+                FileStream fs = new FileStream(filename, FileMode.Open);
 #pragma warning disable CS8600 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
-            City[] cities = mySerializer.Deserialize(fs) as City[];
+                cities = mySerializer.Deserialize(fs) as City[];
 #pragma warning restore CS8600 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
-            fs.Close();
+                fs.Close();
+            }
             return cities;
         }
 
+
+        public City[] GetAll()
+        {
+            return cities;
+        }
+   
         //Select city by id
         public City Get(int id)
         {

@@ -31,9 +31,9 @@ namespace TestWeatherPointInterest
             var cities =  await controller.GetAllCity();
             Assert.IsType < ActionResult<City[]>>(cities);
             Assert.NotNull(cities.Value);
-#pragma warning disable CS8604 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
-            City naples = cities.Value.Where(x => x.Name == "Napoli").FirstOrDefault();            
-#pragma warning restore CS8604 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
+#pragma warning disable CS8600,CS8604 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
+            City naples = cities.Value.Where(x => x.Name == "Napoli").FirstOrDefault();
+#pragma warning restore CS8600, CS8604 // Conversione del valore letterale Null o di un possibile valore Null in un tipo che non ammette i valori Null.
             Assert.NotNull(naples);
             if (naples != null)
             {

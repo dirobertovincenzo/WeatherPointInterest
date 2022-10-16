@@ -17,7 +17,8 @@ namespace WeatherPointInterest.Controllers
          */
         public async Task<ActionResult<City[]>> GetAllCity()
         {
-            return (new CityDAO()).GetAll();
+            City[] cities = new CityDAO().GetAll();
+            return cities.Length > 0 ? cities : NotFound();
         }
 
         [Route("{name:alpha}")]

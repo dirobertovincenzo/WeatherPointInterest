@@ -22,6 +22,8 @@ namespace WeatherPointInterest.Controllers
         //Istanzia dinamicamente HttpClient provando a sopperire il problema del consuming delle socket
         private readonly IHttpClientFactory _httpClientFactory;
 
+
+
         public CityInfoController(ILogger<CityInfoController> logger, IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
@@ -31,16 +33,18 @@ namespace WeatherPointInterest.Controllers
 
         
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CityInfo>>> GetAll()
+        public async Task<ActionResult<CityInfo[]>> GetAll()
         {
             City[] cities = (new CityDAO()).GetAll();
+            if(cities.Length == 0)
+            {
+                return NotFound();
+            }
             List<CityInfo> cityInfo = new();
             foreach (City c in cities)
             {
-                 cityInfo.Add(new CityInfo(c,
-                 await this.GetWeatherInfo(c),
-                 await this.GetBusinessSearchEndpoint(c)
-                ));
+
+                cityInfo.Add(await this.GetCityInfo(c)); 
             }
             return cityInfo.ToArray();
         }
@@ -54,7 +58,7 @@ namespace WeatherPointInterest.Controllers
             {
                 return NotFound();
             }
-            return this.GetCityInfo(city);
+            return await this.GetCityInfo(city);
         }
 
         [HttpGet("{cityId}")]
@@ -66,14 +70,14 @@ namespace WeatherPointInterest.Controllers
             {
                 return NotFound();
             }
-            return this.GetCityInfo(city);
+            return await this.GetCityInfo(city);
         }
 
-        private CityInfo GetCityInfo(City city)
+        private async Task<CityInfo> GetCityInfo(City city)
         { 
             CityInfo cityInfo = new CityInfo(city,
-                this.GetWeatherInfo(city).Result,
-                this.GetBusinessSearchEndpoint(city).Result
+                await this.GetWeatherInfo(city),
+                await this.GetBusinessSearchEndpoint(city)
                 );
             return cityInfo;
         }

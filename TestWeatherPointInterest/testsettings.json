@@ -1,0 +1,15 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "WeatherAPIKey": "194ab5351af797b6bbda6cf1ee5fc321",
+  "WeatherBaseUrl": "https://api.openweathermap.org/",
+  "WeatherCntDefault": 1,
+  "BusinessAPIKey": "vwCUDDoUaABrpUUoVUXCltwuYsPGKrGy5Hu5E9G_QuK3HHsw0-NRu9EPd8luHt6Gbvv6wQtukLtauHstHKoeZ7WdwjOcNuSuCwG7Pg0BFZbxtQIhBYudK_YfNr5KY3Yx",
+  "BusinessBaseUrl": "https://api.yelp.com/",
+  "BusinessLimit": 30 //Max Limit 50
+}
